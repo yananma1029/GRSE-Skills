@@ -1,0 +1,47 @@
+# Run outputs: trajectories, checkpoints, evaluation files, logs, figures.
+# All of them are created automatically by the scripts and are not tracked.
+/experiments/
+/logs/
+/results/
+/outputs/
+/runs/
+*.log
+*.out
+*.pkl
+
+# Per-run configs written by the scripts (seed and actor/server substitutions)
+/configs/runtime/
+
+# Benchmark data. Fetch it yourself, see "Data" in README.md.
+/data/
+/env/
+
+# Secrets / local env
+.env
+.env.*
+*.key
+openai_key.txt
+llm_config.json
+
+# Archives & large binaries
+*.zip
+*.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.eggs/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store

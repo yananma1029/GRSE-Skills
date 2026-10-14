@@ -1,0 +1,9 @@
+{
+  "agent_1": {
+    "multi-hop-context-expansion": "helpful"
+  },
+  "agent_2": {
+    "answer-fidelity-and-temporal-precision": "helpful"
+  },
+  "source_of_helpful_skills": "experiments/grpo/runs/grpo_locomo_cat4_20261004_054436_fe2472a9/checkpoints/iter_5"
+}

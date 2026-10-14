@@ -1,0 +1,44 @@
+{
+  "skills": [
+    {
+      "name": "algebraic-equation-solving",
+      "description": "Use when a question involves solving linear or quadratic equations for an unknown.",
+      "body": "## Equation Solving Procedure\n1. Move all terms containing the unknown to the left-hand side and constants to the right.\n2. For linear equations `ax + b = c`, compute `x = (c - b) / a`.\n3. For quadratics `ax^2 + bx + c = 0`, compute the discriminant `d = b^2 - 4ac`; if `d >= 0`,\n   return `x = (-b \u00b1 sqrt(d)) / (2a)`.\n4. Substitute each root back into the original equation to verify it.\n\n## Do NOT emit\n- roots that fail the substitution check",
+      "metadata": {},
+      "skill_id": "algebraic-equation-solving",
+      "provenance": "human",
+      "utility": 0.0,
+      "invocations": 96
+    },
+    {
+      "name": "focused-latest-session-retrieval",
+      "description": "Use when retrieving evidence: keeps the grep budget small and avoids stale, superseded facts.",
+      "body": "## Focused Retrieval Protocol\nLong conversations contain outdated statements; the most recent session reflects the speaker's current state.\n\n1. Pick the single most distinctive keyword from the question (one word, no alternation). Example: for\n   \"What instrument does Sam play?\" use `<grep>instrument</grep>`.\n2. Issue up to 3 greps. Allow a second grep if the first yields no results (use broader semantic keywords) or if a specific date/session range needs to be targeted. Do not issue more than 3 greps unless the question requires cross-session synthesis of non-overlapping facts.\n3. Prioritize the most recent session containing *relevant* substantive evidence. Explicitly allow retrieval from earlier sessions if the question contains specific historical date anchors (e.g., 'last Friday', 'during the trip in June') or if an earlier session contains a more complete enumeration (e.g., a full list of items) than the latest session.\n4. Hand off at most two evidence lines.\n5. Copy the entire text of the matching turn(s) verbatim to avoid truncating subsequent clauses which may contain the actual answer.\n\n## Do NOT emit\n- more than 3 `<grep>` calls\n- truncated evidence lines that omit subsequent clauses in the same turn\n- a second grep using the exact same keyword as the first grep if the first yielded no results (change the keyword to a broader semantic variant instead)",
+      "metadata": {},
+      "skill_id": "focused-latest-session-retrieval",
+      "provenance": "refined",
+      "utility": -0.12,
+      "invocations": 96
+    },
+    {
+      "name": "multi-hop-context-expansion",
+      "description": "Forces the retriever to expand grep results to adjacent turns to capture Q&A pairs, session details, and antecedents required for complete answers.",
+      "body": "## Retrieval Expansion Rules\n\n1. **Q&A Pair Expansion**: When a grep hit contains a direct question (e.g., \"How long...\", \"What is the name...\"), the answer is almost always in the **next turn**. \n   - *Action*: Do not stop at the question turn. Retrieve the subsequent turn (e.g., if `[D20:20]` asks \"How long?\", retrieve `[D20:21]`).\n   - *Example*: If `[D20:20]` is \"How long have you been doing yoga?\", retrieve `[D20:21]` which contains \"3 years\".   - *Note*: If the answer turn contains bracketed metadata (e.g., `[image: a dog in a park]`), you MUST include the full metadata tag in your final evidence output. Do not truncate to fit word limits.\n\n2. **Session Context Expansion**: When a broad keyword (e.g., \"play games\", \"husband\") hits a turn, the specific details are often in adjacent turns within the same session.\n   - *Action*: After finding an initial hit (e.g., `[D19:11]` \"play games\"), immediately grep for the session ID (e.g., `D19:`) or broader activity terms (\"together\", \"outdoors\", \"detective\") to capture follow-ups.\n   - *Example*: If `[D19:11]` mentions \"play games\", retrieve `[D19:13]` (\"play detective games together\") and `[D19:15]` (\"spend time outdoors\").\n6. **Process Detail Expansion**: When a turn summarizes a process (e.g., \"I made a cake\", \"We went to the beach\"), the specific steps or items are in the subsequent turns.\n   - *Action*: Grep for list markers or action verbs in the next 2-3 turns of the same session.\n   - *Example*: If `[D5:10]` is \"I cooked dinner\", retrieve `[D5:11]`-`[D5:12]` to find specific dishes (e.g., \"spaghetti\", \"salad\").\n\n3. **Antecedent Retrieval**: When a turn contains a reaction or short cue (e.g., \"smile\", \"nice\", \"that was great\"), the object or subject is in the **previous turn**.\n   - *Action*: Retrieve the turn immediately preceding the reaction turn.\n   - *Example*: If `[D8:23]` is \"smile to face\", retrieve `[D8:22]` to identify the object (e.g., \"photo\").\n\n4. **Named Entity Targeting**: For questions about specific names or titles (e.g., \"What is the project called?\"), grep for the specific identifier words (\"called\", \"named\") or the entity itself in follow-up turns, not just the introductory turn.\n   - *Action*: If `[D9:1]` is an introduction, grep for `called` or `name` in the same session to find `[D9:3]`.\n\n5. **Temporal Abstraction**: If a specific date (e.g., \"next year\", \"2024\") yields no results, grep for semantic equivalents: \"future\", \"planning\", \"aiming\", \"soon\".\n\n## Tool Usage\n\n- Always use `<grep>PATTERN</grep>` to search.\n- If the first grep returns only a question, run a second grep for the answer content or the session ID.\n- **Do NOT** output the grep command itself as the final answer. Extract the specific turn lines.\n\n## Do NOT emit\n\n- `NO_EVIDENCE` (if relevant session turns exist but were not fully retrieved)\n- The raw grep command string (e.g., `grep \"surf\"`)\n- `not mentioned` (if adjacent turns contain the answer)\n- Truncated excerpts (provide the full turn if the answer is in the second or third sentence)\n- Truncated or omitted bracketed metadata (e.g., `[image: ...]`, `[video: ...]`, `[audio: ...]`). These often contain the specific answer (e.g., object identification, date). NEVER drop them to save space.\n- `Answer:` prefix (output raw evidence lines)",
+      "metadata": {},
+      "skill_id": "multi-hop-context-expansion",
+      "provenance": "human",
+      "utility": 0.1785,
+      "invocations": 96
+    },
+    {
+      "name": "metadata-adaptive-retrieval",
+      "description": "Use when standard keyword grep fails, to target `[image: ...]` tags and expand to specific entity terms for noisy results.",
+      "body": "When `grep` for a generic term (e.g., `planning`, `game`, `suggest`) returns noise or zero hits, immediately pivot to **Adaptive Keyword Expansion** and **Metadata-Aware Retrieval**.\n\n1.  **Metadata Awareness**: Visual details (e.g., `lighting`, `outdoors`, `Surfing`) are often embedded in `[image: ...]` tags rather than dialogue text. If a text grep for `lighting` or `outdoor` fails, execute:\n    `<grep>\\[image:.*lighting\\]</grep>`\n    or\n    `<grep>\\[image:.*outdoor\\]</grep>`\n    The answer is frequently the caption within the tag (e.g., `[D15:30] [image: ...Surfing...]`).\n\n2.  **Entity-Specific Expansion**: Broad terms like `planning` or `recommend` cause truncation or irrelevant hits. Replace them with specific project or activity entities. If `planning` yields noisy results, grep for the distinct nouns in the question:\n    `<grep>renewable|energy|water</grep>`\n    This targets specific turns like `[D22:10]` and `[D22:12]` where generic keywords miss the evidence.\n\n3.  **Antecedent Retrieval**: If the answer is in an image tag (e.g., `[D15:30]`) but the question is asked later (e.g., `[D15:38]`), do not stop at the later turn. Expand to the preceding turn containing the `[image: ...]` tag. The visual description is the source of truth for \"suggested\" or \"visual\" questions.\n\n4.  **Date-Anchor Fallback**: If time-anchored queries (e.g., `finished last Friday`) fail, grep for the explicit date in the prompt (e.g., `23 January`) to bypass \"latest session\" bias.\n\n**Worked Example Pattern**:\n*   **Fail**: `grep 'planning'` \u2192 Noisy results.\n*   **Fix**: `grep 'renewable'` \u2192 Hits `[D22:10]`.\n*   **Fail**: `grep 'lighting'` \u2192 No hits.\n*   **Fix**: `grep '\\[image:.*light\\]'` \u2192 Hits tag containing description.\n\n## Do NOT emit\n*   Raw grep command strings as final answers.\n*   `not mentioned` or `unknown` (always retry with metadata tags).\n*   Generic keywords like `suggest`, `game`, or `planning` when specific entities (`renewable`, `Surfing`, `detective`) are available.\n*   ISO dates (e.g., `2023-10-14`) fabricated from inference; use verbatim dates from evidence.",
+      "metadata": {},
+      "skill_id": "metadata-adaptive-retrieval",
+      "provenance": "induced",
+      "utility": 0.0,
+      "invocations": 0
+    }
+  ]
+}

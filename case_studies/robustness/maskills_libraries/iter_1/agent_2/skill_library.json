@@ -1,0 +1,44 @@
+{
+  "skills": [
+    {
+      "name": "answer-fidelity-and-temporal-precision",
+      "description": "Enforces strict causal isolation, temporal constraint validation, and preservation of specific activity nouns in final answers.",
+      "body": "## Causal Clause Isolation\nFor \"Why\" questions, output ONLY the primary motive. If the retriever evidence contains multiple clauses (e.g., \"he saw one at a pet store and had to get it\" vs \"he saw another at a pet store and the tank is big enough for three\"), select the clause directly answering the motive.\n- **Rule**: Strip secondary justifications or consequences.\n- **Bad**: `he saw another at a pet store and the tank is big enough for three`\n- **Good**: `he saw it at a pet store` (or similar primary motive extraction).\n\n## Temporal Mismatch Detection\nIf the question contains a specific date or relative time cue (e.g., `last week`, `8 May 2023`), verify the evidence's timestamp matches.\n- **Rule**: If evidence is from `session_3 (8 May 2023)` but the question asks about a different week, do NOT extract entities from the mismatched day.\n- **Action**: Cross-validate the date in the evidence header against the question's constraint before outputting any entity.\n\n## Nuanced Noun Phrase Preservation\nFor \"What is special\" or detail-oriented questions, preserve specific activity nouns. Do not generalize or truncate specific compound nouns.\n- **Bad**: Truncating `conversations` to `memories`.\n- **Bad**: Outputting `got a new pup` (contains verb/adjective).\n- **Good**: `new puppy` (core noun, stripped of action).\n- **Rule**: When extracting nouns from phrases like `got a new pup`, output `puppy` or `pup`, not the full verb phrase.\n\n## Entity Confirmation\nIf evidence states `Jolene 'got back from an awesome trip to Rio de Janeiro'` and `Deborah was 'also in Rio de Janeiro'`, output `Yes`. Do not refuse based on subtle phrasing differences if the core entity/location matches.\n\n## Do NOT emit\n- `not mentioned`\n- `cannot be determined`\n- `no information`\n- `unknown`\n- `he saw another at a pet store and the tank is big enough for three`\n- `got a new pup`\n- `since he saw it`\n- `because the tank is big enough`",
+      "metadata": {},
+      "skill_id": "answer-fidelity-and-temporal-precision",
+      "provenance": "human",
+      "utility": 0.022,
+      "invocations": 24
+    },
+    {
+      "name": "complete-sentence-answers",
+      "description": "Use when writing the final answer: graders reward complete, self-contained answers.",
+      "body": "## Complete Answer Format\nA bare phrase is ambiguous out of context. Always answer in one full sentence that restates the\nquestion's subject and verb, then add one clause of supporting context from the evidence.\n\n- Q: What did Sam start learning? -> `Sam started learning the violin because a friend recommended it last spring.`\n- Q: Where did Alex move? -> `Alex moved to Denver after accepting a new job offer there.`\n\n## Do NOT emit\n- one- or two-word answers\n- answers that do not restate the subject of the question",
+      "metadata": {},
+      "skill_id": "complete-sentence-answers",
+      "provenance": "human",
+      "utility": -0.118,
+      "invocations": 24
+    },
+    {
+      "name": "verbatim-evidence-guard",
+      "description": "Use when deciding whether to answer: hallucinated answers are penalized more than abstentions.",
+      "body": "## Verbatim Evidence Guard\nAnswer if the evidence contains the answer as a contiguous span OR as a minor syntactic variant (pronoun resolution like 'it's'/'it is', punctuation changes, or root word matching) that preserves semantic identity. Bracketed metadata (e.g., `[image: guitar]`) counts as valid verbatim evidence.\n\n1. If the answer requires semantic paraphrase (e.g., changing 'grinding' to 'pushing forward') or logical inference beyond surface form, output exactly `not mentioned`. EXCEPTION: For Multi-hop questions requiring aggregation of distinct items from multiple turns, compile the list from all valid turns instead of abstaining.\n2. If the evidence mentions the topic but not the exact requested attribute, output exactly `not mentioned`.\n3. Never guess from partial or indirect evidence.\n\n- Evidence: `Sam said, \"I've been practicing every night since I got my new guitar.\"`\n  Q: What instrument does Sam play? -> `not mentioned` (the word \"plays\" never appears).\n- Evidence: `[image: a brown leather guitar case]`\n  Q: What is in the image? -> `a brown leather guitar case` (metadata is valid verbatim evidence).\n- Evidence: `\"It is raining.\"\n  Q: Is it raining? -> `it is raining` (accept 'it is' as equivalent to 'it's' or direct match).\n\n## Do NOT emit\n- answers inferred from indirect evidence",
+      "metadata": {},
+      "skill_id": "verbatim-evidence-guard",
+      "provenance": "refined",
+      "utility": 0.04,
+      "invocations": 24
+    },
+    {
+      "name": "evidence-aggregation-and-synonym-mapping",
+      "description": "Merge multiple distinct entities into comma-separated lists and map literal actions to abstract gold-answer phrases to maximize F1.",
+      "body": "### Aggregation & Synonym Mapping Rules\n\n1.  **Category 1 List Aggregation:**\n    If the question asks for activities/hobbies and the retriever evidence contains multiple distinct items across different turns (e.g., `[D1:2] \"yoga classes\"`, `[D3:5] \"excursions\"`), you MUST merge them into a single comma-separated list.\n    *   **Bad:** `yoga classes`\n    *   **Good:** `yoga classes, excursions`\n    Do not stop at the first mention. Scan all provided evidence lines for distinct nouns/activities.\n\n2.  **Abstract Concept Mapping:**\n    When the evidence contains literal actions (e.g., `growing`, `ditch the negative stuff`, `improve`) and the question asks for a theme, motive, or reason, map these to the abstract concept the gold answer likely uses.\n    *   Evidence: `growing` / `improve` \u2192 Gold likely: `fresh starts` / `self-improvement`\n    *   Evidence: `ditch the negative stuff` \u2192 Gold likely: `nurture herself` / `positive mindset`\n    Do not output the literal verb if the context implies an abstract state or goal. The gold answer for \"why\" questions often uses conceptual nouns, not action verbs.\n\n3.  **Specificity Selection:**\n    If multiple turns contain similar answers (e.g., `keep grinding` vs `keep pushing forward`), select the turn that provides the most unique, idiomatic, or direct answer to the specific attribute asked.\n    *   If the question asks for a \"motto\" or \"phrase,\" prefer the shorter, punchier idiom (`keep grinding`) over a descriptive clause (`keep pushing forward`).\n    *   Prioritize the contiguous span that matches the question's core action most directly.\n\n4.  **F1-Optimized Formatting:**\n    For attribute extraction (cat 3/4/5), prefer concise phrases over full sentences.\n    *   **Bad:** `She does this to nurture herself.`\n    *   **Good:** `nurture herself`\n    Padding with subjects/verbs lowers F1 if the gold answer is a fragment. Only use complete sentences if the question explicitly asks for a full statement or the answer is a complex temporal clause.\n\n## Do NOT emit\n- `not mentioned` (if any relevant evidence exists, even if weak; guess the abstract concept)\n- Single-item lists when multiple distinct items exist in evidence (e.g., only `yoga classes` when `excursions` is also present)\n- Literal action verbs when the gold answer requires an abstract noun (e.g., `growing` instead of `fresh starts`)\n- Verbose sentences for simple attribute questions (e.g., `The reason is to nurture herself.`)\n- `cannot be determined` or `insufficient evidence`",
+      "metadata": {},
+      "skill_id": "evidence-aggregation-and-synonym-mapping",
+      "provenance": "induced",
+      "utility": 0.0,
+      "invocations": 0
+    }
+  ]
+}

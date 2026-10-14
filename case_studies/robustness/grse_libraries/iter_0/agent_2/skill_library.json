@@ -1,0 +1,34 @@
+{
+  "skills": [
+    {
+      "name": "answer-fidelity-and-temporal-precision",
+      "description": "Enforces strict causal isolation, temporal constraint validation, and preservation of specific activity nouns in final answers.",
+      "body": "## Causal Clause Isolation\nFor \"Why\" questions, output ONLY the primary motive. If the retriever evidence contains multiple clauses (e.g., \"he saw one at a pet store and had to get it\" vs \"he saw another at a pet store and the tank is big enough for three\"), select the clause directly answering the motive.\n- **Rule**: Strip secondary justifications or consequences.\n- **Bad**: `he saw another at a pet store and the tank is big enough for three`\n- **Good**: `he saw it at a pet store` (or similar primary motive extraction).\n\n## Temporal Mismatch Detection\nIf the question contains a specific date or relative time cue (e.g., `last week`, `8 May 2023`), verify the evidence's timestamp matches.\n- **Rule**: If evidence is from `session_3 (8 May 2023)` but the question asks about a different week, do NOT extract entities from the mismatched day.\n- **Action**: Cross-validate the date in the evidence header against the question's constraint before outputting any entity.\n\n## Nuanced Noun Phrase Preservation\nFor \"What is special\" or detail-oriented questions, preserve specific activity nouns. Do not generalize or truncate specific compound nouns.\n- **Bad**: Truncating `conversations` to `memories`.\n- **Bad**: Outputting `got a new pup` (contains verb/adjective).\n- **Good**: `new puppy` (core noun, stripped of action).\n- **Rule**: When extracting nouns from phrases like `got a new pup`, output `puppy` or `pup`, not the full verb phrase.\n\n## Entity Confirmation\nIf evidence states `Jolene 'got back from an awesome trip to Rio de Janeiro'` and `Deborah was 'also in Rio de Janeiro'`, output `Yes`. Do not refuse based on subtle phrasing differences if the core entity/location matches.\n\n## Do NOT emit\n- `not mentioned`\n- `cannot be determined`\n- `no information`\n- `unknown`\n- `he saw another at a pet store and the tank is big enough for three`\n- `got a new pup`\n- `since he saw it`\n- `because the tank is big enough`",
+      "metadata": {},
+      "skill_id": "answer-fidelity-and-temporal-precision",
+      "provenance": "human",
+      "utility": 0.0,
+      "invocations": 0
+    },
+    {
+      "name": "complete-sentence-answers",
+      "description": "Use when writing the final answer: graders reward complete, self-contained answers.",
+      "body": "## Complete Answer Format\nA bare phrase is ambiguous out of context. Always answer in one full sentence that restates the\nquestion's subject and verb, then add one clause of supporting context from the evidence.\n\n- Q: What did Sam start learning? -> `Sam started learning the violin because a friend recommended it last spring.`\n- Q: Where did Alex move? -> `Alex moved to Denver after accepting a new job offer there.`\n\n## Do NOT emit\n- one- or two-word answers\n- answers that do not restate the subject of the question",
+      "metadata": {},
+      "skill_id": "complete-sentence-answers",
+      "provenance": "human",
+      "utility": 0.0,
+      "invocations": 0
+    },
+    {
+      "name": "verbatim-evidence-guard",
+      "description": "Use when deciding whether to answer: hallucinated answers are penalized more than abstentions.",
+      "body": "## Verbatim Evidence Guard\nAnswer only if the retriever evidence contains the answer verbatim as one contiguous span.\n\n1. If the answer requires any paraphrase, inference, or combining two turns, output exactly `not mentioned`.\n2. If the evidence mentions the topic but not the exact requested attribute, output exactly `not mentioned`.\n3. Never guess from partial or indirect evidence.\n\n- Evidence: `Sam said, \"I've been practicing every night since I got my new guitar.\"`\n  Q: What instrument does Sam play? -> `not mentioned` (the word \"plays\" never appears).\n\n## Do NOT emit\n- answers inferred from indirect evidence",
+      "metadata": {},
+      "skill_id": "verbatim-evidence-guard",
+      "provenance": "human",
+      "utility": 0.0,
+      "invocations": 0
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "env": "language",
+  "base": {
+    "exp_name": "grpo_hotpotqa_test500",
+    "task_type": "qa",
+    "architecture": "decentralized",
+    "benchmark_path": "env/lang_benchmark/HotPotQA",
+    "experiment_dir": "experiments/grpo",
+    "num_agents": 2,
+    "num_iterations": 5,
+    "trajectories_per_iteration": 100,
+    "n_train": 100,
+    "n_val": 50,
+    "n_test": 500,
+    "max_workers": 8,
+    "optimizer_workers": 8,
+    "llm": {
+      "name": "qwen3.8-27b",
+      "model_string": "Qwen/Qwen3.8-27B",
+      "base_url": "http://localhost:18001/v1",
+      "api_key": "EMPTY",
+      "max_tokens": 4096
+    },
+    "critic_llm": {
+      "name": "qwen3.8-27b",
+      "model_string": "Qwen/Qwen3.8-27B",
+      "base_url": "http://localhost:18001/v1",
+      "api_key": "EMPTY",
+      "max_tokens": 4096
+    },
+    "optimizer_llm": {
+      "name": "qwen3.8-27b",
+      "model_string": "Qwen/Qwen3.8-27B",
+      "base_url": "http://localhost:18001/v1",
+      "api_key": "EMPTY",
+      "max_tokens": 4096
+    },
+    "include_context": true,
+    "inject_tool_reference": false,
+    "max_search_calls": 3,
+    "qa_reward_metric": "f1",
+    "skill_eval_delta": 0.03,
+    "induct_every": 1,
+    "max_skills_per_agent": 8,
+    "answer_brevity_hint": true,
+    "eval_test_every_iter": true,
+    "refine_every": 1,
+    "consolidate_every": 2,
+    "prune_every": 2,
+    "evolve_role": false,
+    "hard_trajectory_threshold": 0.5
+  },
+  "grpo": {
+    "rollouts_per_question": 4,
+    "questions_per_iteration": 100,
+    "selection_mode": "all",
+    "temperature": null,
+    "validation_rollouts": 1,
+    "bootstrap_empty": false,
+    "seed": 42,
+    "validation_mode": "independent"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "qwen3.8-27b",
+  "model_string": "Qwen/Qwen3.8-27B",
+  "base_url": "http://localhost:18001/v1",
+  "api_key": "EMPTY",
+  "max_tokens": 4096
+}

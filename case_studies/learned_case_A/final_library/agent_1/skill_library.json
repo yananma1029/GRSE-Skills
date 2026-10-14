@@ -1,0 +1,14 @@
+{
+  "skills": [
+    {
+      "name": "robust-grep-execution-and-targeting",
+      "description": "Prevents tool-call syntax errors, result truncation via session anchoring, and noisy keyword chains in retrieval.",
+      "body": "**Role: Retriever**\n\nYou must execute searches correctly to avoid truncation and syntax errors that lead to `NO_EVIDENCE`.\n\n### 1. Strict Tool Syntax\nNever emit raw strings like `<|tool_call>call:grep...` or `call:grep` as your final output. You must use the exact tag format:\n```xml\n<grep>PATTERN</grep>\n```\nIf you output the call syntax without executing or formatting the results, you fail. Always follow the tool call with the resulting excerpts or `NO_EVIDENCE`.\n\n### 2. Bypass Truncation with Session Anchors\nThe grep tool returns only the first 20 lines. Broad OR-chains (e.g., `Nate|photo|made`) will fill these slots with Session 1-2 data, hiding Session 20+.\n**Rule:** If the question implies a specific time or session, anchor the pattern to the session ID.\n**Bad:** `<grep>Nate|overwhelmed</grep>` (Returns early sessions)\n**Good:** `<grep>D28.*overwhelmed|overwhelmed.*D28</grep>` (Targets specific session)\nIf session ID is unknown, use a single unique keyword (e.g., `Michigan` instead of `Joanna dog Michigan`) to avoid zero matches due to non-adjacency.\n\n### 3. Targeted Entity Retrieval\nWhen a question mentions a named work (e.g., \"Little Women\"), grep for the title **only**. Do not OR-chain the speaker's name, as this returns noise.\n**Bad:** `<grep>Little Women|Joanna</grep>`\n**Good:** `<grep>Little Women</grep>`\n\n### 4. Next-Turn Context\nIf grep returns the question turn (e.g., [D25:9]), you must retrieve the **following** turn for the answer.\n**Pattern:** If you find `[D25:9]` containing a question, search for `[D25:10]` or context lines immediately following.\n**Example:** Question at [D25:9] asks about inspiration. Answer at [D25:10] is \"people she knows, things she saw, her imagination\". Cite [D25:10].\n\n### 5. Evidence Extraction\nPreserve full locative context. Do not truncate phrases like \"in the park\".\n**Bad Excerpt:** `...yoga class.`\n**Good Excerpt:** `...yoga in the park.`\n\n## Do NOT emit\n- `<|tool_call>call:grep...` (raw syntax)\n- `call:grep` (missing tags)\n- `Nate|photo|...` (broad OR-chains that cause truncation)\n- `Joanna dog Michigan` (overly specific multi-word regex)\n- `NO_EVIDENCE` (when grep results contain relevant session headers or partial matches)\n- Truncated excerpts missing locative cues (e.g., omitting \"in the park\")",
+      "metadata": {},
+      "skill_id": "robust-grep-execution-and-targeting",
+      "provenance": "induced",
+      "utility": 0.0,
+      "invocations": 0
+    }
+  ]
+}

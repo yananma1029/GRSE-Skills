@@ -1,0 +1,62 @@
+{
+  "env": "locomo",
+  "conversation_split": [
+    2,
+    2,
+    6
+  ],
+  "base": {
+    "exp_name": "grpo_locomo_cat4_robust_structured",
+    "benchmark_path": "env/locomo/data/locomo10.json",
+    "experiment_dir": "experiments/grpo",
+    "architecture": "decentralized",
+    "main_agent": "agent_2",
+    "num_agents": 2,
+    "category_filter": [
+      4
+    ],
+    "num_iterations": 5,
+    "trajectories_per_iteration": 24,
+    "n_val": 159,
+    "n_test": 453,
+    "max_workers": 32,
+    "optimizer_workers": 16,
+    "llm": {
+      "name": "qwen3.8-27b",
+      "model_string": "Qwen/Qwen3.8-27B",
+      "base_url": "http://localhost:18001/v1",
+      "api_key": "EMPTY",
+      "max_tokens": 4096
+    },
+    "max_context_tokens": 40000,
+    "chars_per_token": 4,
+    "max_grep_calls": 3,
+    "grep_max_lines": 20,
+    "retriever_sees_conversation": false,
+    "locomo_reward_metric": "f1_bleu_mean",
+    "answer_brevity_hint": false,
+    "eval_test_every_iter": true,
+    "skill_eval_delta": 0.02,
+    "refine_every": 1,
+    "induct_every": 1,
+    "consolidate_every": 2,
+    "prune_every": 3,
+    "max_skills_per_agent": 4,
+    "evolve_role": false,
+    "hard_trajectory_threshold": 0.5
+  },
+  "grpo": {
+    "rollouts_per_question": 4,
+    "questions_per_iteration": 24,
+    "selection_mode": "all",
+    "temperature": null,
+    "eval_temperature": 0.0,
+    "prompt_profile": "locomo",
+    "validation_rollouts": 1,
+    "bootstrap_empty": false,
+    "seed": 42,
+    "validation_mode": "independent",
+    "structured_failures": true,
+    "category_analysis": false
+  }
+}

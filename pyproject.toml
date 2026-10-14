@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grse"
+version = "1.0.0"
+description = "GRSE: group-relative behavioral credit assignment for evolving multi-agent skills (built on MASkills)"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "openai>=1.0",
+    "tqdm",
+]
+
+[project.urls]
+"Based on (MASkills)" = "https://github.com/DaRL-GenAI/MASkills"
+
+[project.optional-dependencies]
+# GAIA attachment parsing (xlsx / pdf / docx / pptx). GAIA's SEARCH and BROWSE
+# tools speak to Tavily over urllib and need only TAVILY_API_KEY.
+gaia = ["openpyxl", "pdfplumber", "python-docx", "python-pptx"]
+# HotpotQA / MATH / HumanEval: F1 and BLEU metrics, the sympy sandbox, and the
+# MediaWiki search client behind the wiki search tool.
+language = ["nltk", "sympy", "requests"]
+# Per-iteration curves (notebooks/locomo_iteration_curves.ipynb).
+analysis = ["matplotlib", "numpy", "scipy", "pandas", "jupyter"]
+all = ["grse[gaia,language,analysis]"]
+dev = ["pytest", "pytest-cov", "ruff", "mypy", "pre-commit"]
+
+[project.scripts]
+maskills = "maskills.cli.train:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["maskills*", "GRSE*"]
+exclude = ["GRSE.tests*"]
+
+[tool.setuptools.package-data]
+"maskills.envs.language" = ["prompts/**/*.json", "tools/*.md"]
+"maskills.envs.locomo" = ["prompts/*.md"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+ignore = [
+    "E501",  # long lines are mostly prompt text
+    "E741",  # single-letter names match the paper's notation
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "GRSE/tests"]

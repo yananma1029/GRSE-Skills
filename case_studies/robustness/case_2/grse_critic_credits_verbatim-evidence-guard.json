@@ -1,0 +1,186 @@
+[
+ {
+  "iteration": 1,
+  "group_id": "9c2307a84545256d57100f150819059b80031a0ac8baa5b0b0ae081cd30566df",
+  "rollout_rewards": [
+   1.0,
+   0.0,
+   1.0,
+   1.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "helped",
+  "evidence": "In rollout 1, where the evidence was malformed/empty (just a grep tag), the agent correctly output `not mentioned`. In rollouts 0, 2, and 3, the agent extracted the specific noun phrase 'gaming party' from the verbatim evidence, avoiding the hallucination of the full sentence or irrelevant context.",
+  "suggested_edit": "",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": 0.1
+ },
+ {
+  "iteration": 1,
+  "group_id": "c7222cd66389bd6b721b35b0a98e7abb8cb7357e81dc15bc1c89a25b7a057b2a",
+  "rollout_rewards": [
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "In rollouts 0 and 3, agent_2 received the correct evidence turns ([D10:2], [D10:3]) containing the image metadata `[image: a photo of a gaming room with a computer and a gaming chair]` but output 'not mentioned'. The skill's rule 'If the answer requires any paraphrase, inference, or combining two turns, output exactly not mentioned' caused the agent to fail to extract the lighting colors from the image metadata, treating it as 'indirect' or requiring 'inference' to identify the 'red and purple' lighting visible in the photo description. The system prompt explicitly forbids refusal for cat 4.",
+  "suggested_edit": "Remove Rule 2 ('If the evidence mentions the topic but not the exact requested attribute, output exactly not mentioned'). Add Rule: For Category 4 questions, if the evidence contains an `[image: ...]` tag describing the scene (e.g., lighting, colors), extract the descriptive details from the tag as the answer. Do not refuse if the answer is in the metadata tag.",
+  "redundant_with": [],
+  "conflict_with": [
+   "complete-sentence-answers"
+  ],
+  "utility_delta": -1.0
+ },
+ {
+  "iteration": 1,
+  "group_id": "d59ab7c53c746e50d50705cfb264946565e95f704fae9f2b8d5a15a61e5be976",
+  "rollout_rewards": [
+   1.0,
+   1.0,
+   0.0,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "In rollouts 2 and 3 (reward 0.0), the agent received only the question turn [D15:9] from the retriever and output 'not mentioned', citing the guard rule against answering from partial evidence. In rollouts 0 and 1 (reward 1.0), the agent received the answer turn [D15:10] and output the correct game name. The guard prevented the agent from utilizing the 'mandatory fallback rule' for cat 4 questions, which instructs it to output any noun-phrase from the evidence rather than refusing.",
+  "suggested_edit": "Add exception for Category 4 (single-hop): If evidence is limited to a question turn without an answer, DO NOT output 'not mentioned'. Instead, apply the MANDATORY fallback rule from the system prompt: output a best-guess noun-phrase or relevant entity from the question context, as a wrong guess scores 0 but a refusal also scores 0, and the system prompt explicitly bans 'not mentioned' for cat 4.",
+  "redundant_with": [],
+  "conflict_with": [
+   "complete-sentence-answers"
+  ],
+  "utility_delta": -0.5
+ },
+ {
+  "iteration": 1,
+  "group_id": "f2edd4ac4b5f75880e214fdcf3ada063f9dbe4c2cc87b98879bc9c9cabf1a093",
+  "rollout_rewards": [
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "In Rollouts 0, 1, and 2, the agent output 'not mentioned' despite having relevant evidence (or being able to infer a better guess), violating the system prompt's mandate for Cat 3/4 to 'commit to a concrete answer... even an imperfect answer is partial credit; a refusal is zero.' The skill's instruction to output 'not mentioned' if the answer requires any inference or isn't verbatim contiguous directly caused the zero reward in these runs.",
+  "suggested_edit": "Delete the rule 'If the answer requires any paraphrase, inference... output exactly not mentioned'. Replace with: 'For Categories 3 and 4, NEVER output `not mentioned`. If the evidence is indirect or partial, extract the most plausible noun-phrase or short answer from the provided turns. A wrong guess scores 0; a refusal scores 0; a right guess scores 1. Always guess.'",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": -0.9
+ },
+ {
+  "iteration": 1,
+  "group_id": "f521644fe7c5d222674df89ffefe59a58082406d1429531a567696996acbbd9a",
+  "rollout_rewards": [
+   0.05707220932353785,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "In rollouts 1, 2, and 3, the agent output 'not mentioned' or received 'NO_EVIDENCE'/garbage input. In rollout 1, the input was literally the grep command string `<grep>project</grep>`, which is not evidence. The agent correctly refused. However, the main issue is upstream. But in rollout 0, with valid evidence, the agent answered 'workshops with local schools and centers'. The skill's strictness is generally good for hallucination prevention, but the primary failure is upstream retrieval.",
+  "suggested_edit": "Add explicit handling for malformed upstream input: If the 'Evidence' section contains raw grep commands, error messages, or 'NO_EVIDENCE', treat it as empty evidence. If empty, apply the 'Mandatory Fallback Rule' from the system prompt (do not refuse for cat 4, make a best guess from general context if possible, or output 'not mentioned' ONLY if truly no info).",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": -0.1
+ },
+ {
+  "iteration": 2,
+  "group_id": "00df0e356694e0a083eeed4eec3e5dfad49f981d01b2f93cc2cd5ec6746401fc",
+  "rollout_rewards": [
+   1.0,
+   1.0,
+   1.0,
+   1.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "helped",
+  "evidence": "In all 4 rollouts, agent_2 correctly extracted 'Catan' from the evidence line '[D23:7] ... We played this game Catan...'. The skill's exception for Category 4 questions encouraged extracting the specific entity noun phrase when present in the context, which aligns with the correct short-phrase answer format.",
+  "suggested_edit": "",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": 0.8
+ },
+ {
+  "iteration": 2,
+  "group_id": "1d0b11eb9efdf2a6ebf4abe39ed76f3af7ffaaed0f95ae6c95b0799c0fca2daf",
+  "rollout_rewards": [
+   0.0,
+   1.0,
+   0.5833333333333333,
+   0.5833333333333333
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "helped",
+  "evidence": "In rollout 1, the agent correctly extracted '7' from the verbatim evidence 'There were 7 people that attended'. In rollouts 2 and 3, the agent output '7 people', which scored lower (0.58) than '7' (1.0) because the ground truth is the numeric value '7'. The skill's guard against guessing and requirement for verbatim spans supports the extraction, but the final output format was slightly off in non-max reward runs.",
+  "suggested_edit": "Add rule: For 'How many' questions, if the evidence contains a number, output ONLY the number (e.g., '7'), not the number with the unit (e.g., '7 people'), unless the unit is a proper noun or specific category required by context. The LOCOMO grader typically prefers the bare scalar value.",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": 0.5
+ },
+ {
+  "iteration": 2,
+  "group_id": "2202c34140bed9b86a0256553d4bcb639ce44ce92f2d805f4f1910fc1ea2d1c2",
+  "rollout_rewards": [
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "In rollouts 1 and 3, agent_2 received malformed or empty evidence (raw tool calls or no evidence) and output 'not mentioned', violating the system prompt's mandatory fallback for category 4 ('output any short noun-phrase from the cited evidence'). In rollout 0, it received evidence but selected 'CS:GO' (D10:6 'I usually play') instead of the explicit favorite mentioned in later sessions, failing to align with the 'most recent session' principle.",
+  "suggested_edit": "Add rule: For Category 4 questions, NEVER output 'not mentioned'. If evidence is malformed or missing, use the session date or a generic plausible guess. If evidence contains multiple games, prioritize the turn where the speaker explicitly uses the word 'favorite' or the most recent session's specific title over habitual statements like 'I usually play'.",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": -0.5
+ },
+ {
+  "iteration": 2,
+  "group_id": "c398f8c80d1fc1166fcdf81dd46af0f34a27c9bc43151d2a42aa188334568b11",
+  "rollout_rewards": [
+   0.1236604217331006,
+   0.0,
+   0.3037377975800939,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "The skill states 'Answer only if the retriever evidence contains the answer verbatim as one contiguous span.' In rollout 0, the evidence did NOT contain the correct answer, but the agent hallucinated 'she saw one at a pet store...'. In rollout 3, the evidence was irrelevant, and the agent guessed 'they calm her down...'. The skill's strict guard was not effectively followed in the failure cases, or the skill's 'Category 3/4 Exception' (extract most plausible noun-phrase) encouraged guessing over strict adherence when evidence was poor. In rollout 2 (success), the agent extracted 'she was fascinated by reptiles' correctly.",
+  "suggested_edit": "## Do NOT emit\n- Motives that are not explicitly stated in the evidence text. If the evidence contains the question but not the specific reason, and no other turn provides the reason, do NOT infer a motive from background context (e.g., 'calms me down'). Output the specific reason stated in the direct response turn if available; otherwise, output the most direct fact provided in the response turn.",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": -0.3
+ },
+ {
+  "iteration": 3,
+  "group_id": "b71ca4ad916034652cb8f0c27e35e60a54fddeb1527d5f646a1dedf21d941b8e",
+  "rollout_rewards": [
+   1.0,
+   1.0,
+   1.0,
+   0.0
+  ],
+  "agent": "agent_2",
+  "skill_id": "verbatim-evidence-guard",
+  "contribution": "harmful",
+  "evidence": "In rollout 3, agent_2 received the text \"I need to see the context just before D9:12...\" from the retriever. The skill's 'Input Validation' section suggests outputting 'not mentioned' if evidence is empty or malformed. While the input was technically malformed (not an excerpt), the agent refused to guess 'Lord of the Rings' (which was in the retriever's grep logs but not passed as natural language) or any other entity, resulting in a 0.0 reward. The skill encourages abstention on weak evidence, but the system prompt's 'Mandatory fallback' for Cat 4 says to 'output any short noun-phrase... A wrong guess scores 0; a hedged refusal also scores 0'. The skill's strict adherence to 'verbatim contiguous span' or 'not mentioned' on weak input prevented the agent from leveraging the partial context (D9:12 reference) to at least attempt a high-probability guess or flag the specific ambiguity in a way that might have scored partial credit if the grader was fuzzy, though in this case, the primary harm is the refusal pattern.",
+  "suggested_edit": "Modify 'Input Validation' rule: If upstream output indicates missing context (e.g., 'I need to see...'), do NOT output 'not mentioned'. Instead, scan the upstream output for any cited D-IDs or entity hints. If a D-ID (e.g., D9:12) is cited, output a generic high-probability entity for the category or 'Cannot determine specific title' if strict entity is required, but for Cat 4, prefer emitting the most likely proper noun associated with the cited topic if visible in logs, or strictly 'not mentioned' only if NO entities are mentioned at all. In this case, 'Lord of the Rings' was not in the *input text* to agent_2, so 'not mentioned' was the only safe literal option, but the skill should clarify that 'not mentioned' is the *correct* failure mode for malformed upstream when no entities are present, and the real fix is upstream.",
+  "redundant_with": [],
+  "conflict_with": [],
+  "utility_delta": 0.0
+ }
+]

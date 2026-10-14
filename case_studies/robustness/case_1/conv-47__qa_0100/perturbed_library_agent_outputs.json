@@ -1,0 +1,14 @@
+{
+ "reward": 0.0,
+ "answer": "not mentioned",
+ "steps": [
+  {
+   "agent": "agent_1",
+   "output": "[D15:11] (9:59 pm on 19 June, 2022) James said: \"I volunteered with an organization that provides necessary items to those who are less fortunate.\"\n[D15:14] (9:59 pm on 19 June, 2022) John said: \"Thank you very much! Will there be some kind of interview required?\""
+  },
+  {
+   "agent": "agent_2",
+   "output": "not mentioned"
+  }
+ ]
+}

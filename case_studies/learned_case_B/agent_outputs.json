@@ -1,0 +1,30 @@
+{
+ "question_id": "qa_00150",
+ "gold": "director",
+ "empty_library": {
+  "reward": 0.0,
+  "agent_outputs": [
+   "Filmmaker (or director).",
+   "Filmmaker"
+  ]
+ },
+ "final_library": {
+  "reward": 1.0,
+  "agent_outputs": [
+   "**Classify Question Type**: Entity/Attribute Question. The question asks for a shared \"occupation\" (a role/attribute) between two specific people.\n\n**Identify the Exact Intent**: Determine the specific professional role that both David Yates and Pietro Germi held.\n\n**Constraint-Based Entity Validation & Grounding**:\n1.  **Candidate 1: David Yates**\n    *   Context (Passage 5): \"David Yates... is an English **filmmaker** who has directed feature films, short films, and television productions.\"\n    *   Explicit roles: Filmmaker, Director (implied by \"directed\").\n2.  **Candidate 2: Pietro Germi**\n    *   Context (Passage 8): \"Pietro Germi... was an Italian actor, screenwriter, and **director**.\"\n    *   Context (Passage 1, 3, 4, 6, 7): Repeatedly described as having \"directed\" films.\n    *   Explicit roles: Actor, Screenwriter, Director.\n\n**Disambiguation**:\n*   David Yates is described as a \"filmmaker\" and someone who \"directed.\"\n*   Pietro Germi is described as an \"actor, screenwriter, and director.\"\n*   The intersection of their explicitly stated occupations is **director** (or filmmaker, but \"director\" is the specific role explicitly listed for Germi and implied/stated for Yates via \"directed\"). \"Filmmaker\" is a broader term often used for directors, but \"director\" is the precise shared professional title found in the text for both (Yates: \"directed\"; Germi: \"director\").\n\n**Select the Primary Answer**: The shared occupation is **director**.\n\n**Minimize Output**:\nBridge: N/A (Direct comparison of two entities).\nTarget Attribute: Shared occupation.\nFinal Answer Candidate: Director.\n\n**Handoff to Agent 2**:\nThe question asks for the shared occupation of David Yates and Pietro Germi.\n- Passage 5 states David Yates is a filmmaker who has **directed** feature films.\n- Passage 8 states Pietro Germi was an actor, screenwriter, and **director**.\nThe specific shared occupation explicitly grounded in the text is **director**.",
+   "director"
+  ]
+ },
+ "test_set_evaluation": {
+  "empty_library": {
+   "reward": 0.0,
+   "answer": "Filmmaker",
+   "gold": "director"
+  },
+  "final_library": {
+   "reward": 1.0,
+   "answer": "director",
+   "gold": "director"
+  }
+ }
+}

@@ -1,0 +1,13 @@
+{
+  "agent_1": {
+    "multi-hop-context-expansion": "helpful",
+    "focused-latest-session-retrieval": "harmful",
+    "algebraic-equation-solving": "irrelevant"
+  },
+  "agent_2": {
+    "answer-fidelity-and-temporal-precision": "helpful",
+    "complete-sentence-answers": "harmful",
+    "verbatim-evidence-guard": "harmful"
+  },
+  "source_of_helpful_skills": "experiments/grpo/runs/grpo_locomo_cat4_20261004_054436_fe2472a9/checkpoints/iter_5"
+}
