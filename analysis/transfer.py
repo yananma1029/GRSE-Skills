@@ -17,12 +17,19 @@ HotpotQA scores are token F1 already.
 from __future__ import annotations
 
 import argparse
-import json
 from pathlib import Path
 from statistics import fmean
 
-from common import CATEGORIES, FINAL_ITER, add_repo_to_path, eval_scores, mean_sd, paired_bootstrap, \
-    run_dir, test_answers
+from common import (
+    CATEGORIES,
+    FINAL_ITER,
+    add_repo_to_path,
+    eval_scores,
+    mean_sd,
+    paired_bootstrap,
+    run_dir,
+    test_answers,
+)
 
 METHODS = {"grse": "GRSE", "maskills": "MASkills"}
 

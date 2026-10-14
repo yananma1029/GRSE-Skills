@@ -32,10 +32,9 @@ from statistics import fmean
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from maskills.envs.language.metrics import compute_qa_metrics  # noqa: E402
-
 from GRSE.client import SamplingLLMClient  # noqa: E402
 from GRSE.evaluate import build_env, task_key  # noqa: E402
+from maskills.envs.language.metrics import compute_qa_metrics  # noqa: E402
 
 # The answer contract the agents receive (maskills/core/policy.py).
 FORMAT = ("Your FINAL answer must be the shortest faithful form of the answer (an entity name, "

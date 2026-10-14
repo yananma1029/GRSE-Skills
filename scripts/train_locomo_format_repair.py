@@ -20,8 +20,8 @@ for path in (PROJECT_ROOT, PROJECT_ROOT / "scripts"):
     if str(path) not in sys.path:
         sys.path.insert(0, str(path))
 
-from maskills.experiments import locomo_percat  # noqa: E402
 from GRSE import maskills_format  # noqa: E402
+from maskills.experiments import locomo_percat  # noqa: E402
 from maskills.experiments.locomo import LocomoExperiment  # noqa: E402
 
 locomo_percat.install_runtime_patches()

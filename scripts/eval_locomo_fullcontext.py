@@ -28,9 +28,8 @@ from statistics import fmean
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from maskills.core.base import Trajectory  # noqa: E402
-
 from GRSE.evaluate import build_env, task_key  # noqa: E402
+from maskills.core.base import Trajectory  # noqa: E402
 
 # Verbatim from env/locomo/task_eval/gpt_utils.py (including its typo).
 CONV_START_PROMPT = ("Below is a conversation between two people: {} and {}. The conversation takes place "

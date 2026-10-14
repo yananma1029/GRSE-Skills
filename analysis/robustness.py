@@ -26,8 +26,16 @@ from collections import Counter
 from pathlib import Path
 from statistics import fmean
 
-from common import FINAL_ITER, accepted_operators, add_repo_to_path, eval_scores, libraries, run_dir, \
-    test_answers, abstains
+from common import (
+    FINAL_ITER,
+    abstains,
+    accepted_operators,
+    add_repo_to_path,
+    eval_scores,
+    libraries,
+    run_dir,
+    test_answers,
+)
 
 LABELS = {"grse": "GRSE", "grse_wo": "GRSE w/o structure", "maskills": "MASkills"}
 SEEDS_DIR = "configs/grse/robustness/seeds/perturbed"

@@ -79,7 +79,8 @@ def transitions(before, after, keys):
 
 def hotpotqa_rows(root, actor, methods):
     evals = eval_scores(root / f"experiments/eval/hotpotqa_test500_{actor}_s42.json")
-    as_tuple = lambda lib: {q: (s["reward"], abstains(s.get("answer")), None) for q, s in lib.items()}
+    def as_tuple(lib):
+        return {q: (s["reward"], abstains(s.get("answer")), None) for q, s in lib.items()}
     empty = as_tuple(evals["empty"])
     for m in methods:
         if m in evals:
@@ -88,7 +89,8 @@ def hotpotqa_rows(root, actor, methods):
 
 
 def locomo_rows(root, actor, methods, grse):
-    as_tuple = lambda answers: {q: (a["f1"], a["abstain"], a["evidence"]) for q, a in answers.items()}
+    def as_tuple(answers):
+        return {q: (a["f1"], a["abstain"], a["evidence"]) for q, a in answers.items()}
     empty, keys = {}, []
     finals = {m: {} for m in methods}
     for c in CATEGORIES:

@@ -27,7 +27,7 @@ jobs:
           pip install -e ".[all,dev]"
 
       - name: Lint
-        run: ruff check maskills scripts tests GRSE
+        run: ruff check maskills scripts tests GRSE analysis
 
       # Covers the unit tests and tests/test_scripts_load.py, which loads every
       # experiment driver in scripts/.
