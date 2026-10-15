@@ -175,7 +175,6 @@ configs/llm/             model endpoints
 scripts/                 experiment scripts (run_*.sh), baselines, MASkills baseline runners
 analysis/                analyses of finished runs
 case_studies/            trajectories of the case studies
-notebooks/               per-iteration curves
 ```
 
 ---
