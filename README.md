@@ -144,7 +144,7 @@ A GRSE config is a MASkills config (`base`, `llm`, ...) plus a `grpo` block:
 |---|---|---|
 | `rollouts_per_question` | `4` | Group size `G` |
 | `questions_per_iteration` | -- | Training questions per iteration |
-| `structured_failures` | `false` | Structured failure analysis (`true` in the GRSE configs; `false` in GRSE w/o structure structure) |
+| `structured_failures` | `false` | Structured failure analysis (`true` in the GRSE configs; `false` in GRSE w/o structure) |
 | `category_analysis` | `false` | Condition the critic on the question category (w/ label ablation) |
 | `group_filter` | `none` | `zero_variance` drops groups whose rewards are all equal (DAPO filter ablation) |
 | `single_rollout` | `false` | One rollout per question, no group contrast (G=1 ablation) |
