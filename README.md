@@ -131,8 +131,7 @@ python analysis/learned_skills.py transitions
 python analysis/learned_skills.py skill-types      # labels each final skill with Qwen3.8
 ```
 
-Per-iteration LoCoMo curves: `notebooks/locomo_iteration_curves.ipynb`. The trajectories behind
-the case studies are in `case_studies/`.
+The trajectories behind the case studies are in `case_studies/`.
 
 ---
 

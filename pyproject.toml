@@ -33,7 +33,7 @@ gaia = ["openpyxl", "pdfplumber", "python-docx", "python-pptx"]
 # HotpotQA / MATH / HumanEval: F1 and BLEU metrics, the sympy sandbox, and the
 # MediaWiki search client behind the wiki search tool.
 language = ["nltk", "sympy", "requests"]
-# Per-iteration curves (notebooks/locomo_iteration_curves.ipynb).
+# Analysis scripts and plots.
 analysis = ["matplotlib", "numpy", "scipy", "pandas", "jupyter"]
 all = ["grse[gaia,language,analysis]"]
 dev = ["pytest", "pytest-cov", "ruff", "mypy", "pre-commit"]
