@@ -16,7 +16,7 @@ prompt with its skills, input, output, and the retriever's grep calls in `grep_l
 
 | Case | Setting | Files |
 |---|---|---|
-| A: better retrieval, no refusal | Gemma4 actor, LoCoMo single-hop, GRSE, first run; question `conv-43__qa_0111` | `learned_case_A/trajectory_empty_library.json` (iteration 0), `trajectory_final_library.json` (iteration 5), `final_library/` |
+| A: fetching the answer turn | Gemma4-31B actor, LoCoMo single-hop, GRSE, first run; question `conv-47__qa_0086` (the answer turn D9:18 does not contain the keyword; the final library's skill `adjacent-context-expansion` fetches the turn after a matched question) | `learned_case_A/trajectory_empty_library.json` (iteration 0), `trajectory_final_library.json` (iteration 5), `final_library/` |
 | B: a more specific answer | Qwen3.8 actor, HotpotQA, GRSE, first run; question `qa_00150` | `learned_case_B/agent_outputs.json` (empty and final library, both agents; with the scores of the 500-question evaluation), `final_library/` |
 
 ## Robustness (Appendix, "Robustness Analysis")

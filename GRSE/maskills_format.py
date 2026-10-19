@@ -82,7 +82,7 @@ def route_critic_to_optimizer(experiment_cls):
     Upstream runners set ``llm`` to the actor and never set ``critic_llm``, so
     the critic silently follows the actor. MASkills uses its strong optimizer
     model for credit assignment, and GRSE's critic is the optimizer model too;
-    with a weaker actor (e.g. Gemma) both methods must keep that critic. A
+    with a different actor (e.g. Gemma) both methods must keep that critic. A
     no-op when actor and optimizer are the same model.
     """
     original = experiment_cls.from_json

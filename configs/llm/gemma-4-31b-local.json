@@ -1,6 +1,6 @@
 {
-  "name": "gemma-4-26b-a4b",
-  "model_string": "google/gemma-4-26B-A4B-it",
+  "name": "gemma-4-31b-it",
+  "model_string": "google/gemma-4-31B-it",
   "base_url": "http://localhost:18002/v1",
   "api_key": "EMPTY",
   "max_tokens": 4096

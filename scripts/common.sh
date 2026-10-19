@@ -3,7 +3,7 @@
 # Model servers (OpenAI-compatible, e.g. vLLM):
 #   QWEN_URL   Qwen3.8-27B: critic and optimizer for every method, actor for --actor qwen
 #              (default http://localhost:18001/v1)
-#   GEMMA_URL  Gemma-4-26B-A4B: actor for --actor gemma (default http://localhost:18002/v1)
+#   GEMMA_URL  Gemma-4-31B: actor for --actor gemma (default http://localhost:18002/v1)
 #   OPENAI_API_KEY is passed to the servers; local vLLM servers accept any value.
 #
 # Every run config is written to configs/runtime/ from a template in configs/grse/:
@@ -25,7 +25,7 @@ llm_config() {
   local out="$RUNTIME/llm_$1.json"
   case $1 in
     qwen)  sed "s#http://localhost:18001/v1#$QWEN_URL#" configs/llm/qwen3.8-27b-local.json > "$out" ;;
-    gemma) sed "s#http://localhost:18002/v1#$GEMMA_URL#" configs/llm/gemma-4-26b-a4b-local.json > "$out" ;;
+    gemma) sed "s#http://localhost:18002/v1#$GEMMA_URL#" configs/llm/gemma-4-31b-local.json > "$out" ;;
     *) echo "unknown actor $1" >&2; return 1 ;;
   esac
   echo "$out"
@@ -45,7 +45,7 @@ template, seed, actor, smoke, out, qwen_url, gemma_url = sys.argv[1:]
 seed, smoke = int(seed), smoke == "1"
 c = json.load(open(template))
 if actor == "gemma":
-    gemma = json.load(open("configs/llm/gemma-4-26b-a4b-local.json"))
+    gemma = json.load(open("configs/llm/gemma-4-31b-local.json"))
     c["base"]["exp_name"] += "_gemma"
     c["base"]["actor_llm"] = {k: gemma[k] for k in ("name", "model_string", "base_url", "api_key", "max_tokens")}
 if seed != 42:

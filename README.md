@@ -66,12 +66,12 @@ pip install -e ".[language,analysis]"
 ### Models
 
 All models are served locally with vLLM. Qwen3.8-27B is the critic and optimizer in every run and
-one of the two actors; Gemma-4-26B-A4B is the other actor.
+one of the two actors; Gemma-4-31B is the other actor.
 
 ```bash
 vllm serve Qwen/Qwen3.8-27B --port 18001 --tensor-parallel-size 2 --max-model-len 65536 \
   --default-chat-template-kwargs '{"enable_thinking": false}'
-vllm serve google/gemma-4-26B-A4B-it --port 18002 --tensor-parallel-size 2 --max-model-len 65536 \
+vllm serve google/gemma-4-31B-it --port 18002 --tensor-parallel-size 2 --max-model-len 65536 \
   --reasoning-parser gemma4 --default-chat-template-kwargs '{"enable_thinking": false}'
 ```
 
